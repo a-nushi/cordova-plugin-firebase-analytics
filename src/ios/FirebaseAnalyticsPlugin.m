@@ -90,7 +90,11 @@
         enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
           NSMutableDictionary *item = [obj mutableCopy];
           if (item[kFIRParameterQuantity]) {
-            item[kFIRParameterQuantity] = @([item[kFIRParameterQuantity] integerValue]);
+            @try {
+                item[kFIRParameterQuantity] = @([item[kFIRParameterQuantity] integerValue]);
+            } @catch (NSException *exception) {
+                item[kFIRParameterQuantity] = @1;
+            }
           }
           [newItems addObject:[item copy]];
         }];
