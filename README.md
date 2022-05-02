@@ -1,3 +1,5 @@
+# Forked from the original [cordova-plugin-firebase-analytics](https://github.com/chemerisuk/cordova-plugin-firebase-analytics) to fix some issues on the logEvent method (incorrect quantity on items parameter for iOS platform and missing items handling on Android platform)  
+
 # Cordova plugin for [Firebase Analytics](https://firebase.google.com/docs/analytics/)
 
 [![NPM version][npm-version]][npm-url] [![NPM downloads][npm-downloads]][npm-url] [![NPM total downloads][npm-total-downloads]][npm-url] [![PayPal donate](https://img.shields.io/badge/paypal-donate-ff69b4?logo=paypal)][donate-url] [![Twitter][twitter-follow]][twitter-url]
