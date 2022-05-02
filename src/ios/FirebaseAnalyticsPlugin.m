@@ -17,7 +17,11 @@
     NSString* name = [command.arguments objectAtIndex:0];
     NSDictionary* parameters = [command.arguments objectAtIndex:1];
 
-    [FIRAnalytics logEventWithName:name parameters:parameters];
+    @try {
+        [FIRAnalytics logEventWithName:name parameters:[self cleanJavascriptParams:parameters]];
+    } @catch (NSException *exception) {
+        // reject with exception if needed
+    }
 
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -76,6 +80,27 @@
 
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (NSDictionary *)cleanJavascriptParams:(NSDictionary *)params {
+  NSMutableDictionary *newParams = [params mutableCopy];
+  if (newParams[kFIRParameterItems]) {
+    NSMutableArray *newItems = [NSMutableArray array];
+    [(NSArray *)newParams[kFIRParameterItems]
+        enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+          NSMutableDictionary *item = [obj mutableCopy];
+          if (item[kFIRParameterQuantity]) {
+            item[kFIRParameterQuantity] = @([item[kFIRParameterQuantity] integerValue]);
+          }
+          [newItems addObject:[item copy]];
+        }];
+    newParams[kFIRParameterItems] = [newItems copy];
+  }
+  NSNumber *extendSession = [newParams valueForKey:kFIRParameterExtendSession];
+  if ([extendSession isEqualToNumber:@1]) {
+    newParams[kFIRParameterExtendSession] = @YES;
+  }
+  return [newParams copy];
 }
 
 @end
